@@ -1,129 +1,246 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Juan P. Sotomayor — Software Engineering & AI/ML</title>
+  <meta name="description" content="Juan P. Sotomayor — Software Engineering, AI/ML, cloud systems, and curriculum leadership. Projects, teaching, and contact." />
 
-  <title>Sharad Sharma, University of North Texas</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --panel: rgba(255,255,255,0.06);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 18px;
+      --max: 1040px;
+    }
 
-  <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1000px 600px at 20% 10%, rgba(88,101,242,0.25), transparent 60%),
+        radial-gradient(900px 500px at 80% 0%, rgba(34,197,94,0.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 100%, rgba(236,72,153,0.12), transparent 60%),
+        var(--bg);
+      line-height: 1.55;
+    }
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    a { color: white; text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
-  <!-- Vendor CSS Files -->
-  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 28px 18px 70px; }
 
-  <!-- Template Main CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
+    header {
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(12px);
+      background: rgba(11,15,23,0.55);
+      border-bottom: 1px solid var(--border);
+    }
 
-  <!-- =======================================================
-  * Template Name: Kelly - v4.6.0
-  * Template URL: https://bootstrapmade.com/kelly-free-bootstrap-cv-resume-html-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+    .nav {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: grid; place-items: center;
+      font-weight: 800;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .links a {
+      margin-left: 14px;
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .hero { padding: 50px 0 20px; }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      margin: 0 0 12px 0;
+    }
+
+    .hero p { color: var(--muted); max-width: 80ch; }
+
+    .btn {
+      display: inline-block;
+      margin-right: 10px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.08);
+      font-size: 14px;
+    }
+
+    .grid {
+      margin-top: 30px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 18px;
+    }
+
+    .card h2 { margin-top: 0; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-
-      <h1 class="logo me-auto me-lg-0"><a href="index.html">Sharad Sharma</a></h1>
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
-
-      <nav id="navbar" class="navbar order-last order-lg-0">
-        <ul>
-          <li><a class="active" href="index.html">Home</a></li>
-          <li><a href="resume.html">Resume</a></li>
-          <li><a href="grants.html">Grants</a></li>
-          <li><a href="research.html"> Research</a></li>
-          <li><a href="publication.html"> Publications</a></li>
-          <li><a href="vrlab/index.html"> VR Lab</a></li>
-          <li><a href="https://dvxr.unt.edu/"> DVXR Lab</a></li>
-          <li><a href="student.html">Students</a></li>
-          <li><a href="portfolio.html">Teaching</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="about.html">About</a></li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav><!-- .navbar -->
-
-      <div class="header-social-links">
-        <a href="https://twitter.com/ssharadsharma20?lang=en" class="twitter"><i class="bi bi-twitter"></i></a>
-        <a href="https://www.facebook.com/groups/bsuvr/" class="facebook"><i class="bi bi-facebook"></i></a>
-        <a href="https://orcid.org/0000-0001-7528-4616" class="ORCID"><i class="bi bi-instagram"></i></a>
-        <a href="https://www.linkedin.com/in/ssharad" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
-      </div>
-
-    </div>
-
-  </header><!-- End Header -->
-
-  <!-- ======= Hero Section ======= -->
-  <section id="hero" class="d-flex align-items-center">
-    <div class="container d-flex flex-column align-items-center" data-aos="zoom-in" data-aos-delay="100">
-      <a href="index.html" class="btn-about">Sharad Sharma, Ph. D.</a>
-      <a href="https://ci.unt.edu/about-us/deans-office-staff.html" class="btn-about">Associate Dean of Research</a>
-      <a href="https://ci.unt.edu/ssharma/" class="btn-about">Sinha Endowed Professor, Department of Data Science</a>
-      <a href="https://ci.unt.edu/"class="btn-about">College of Information</a>
-      <a href="https://www.unt.edu/" class="btn-about">University of North Texas, Denton, TX, USA, 76203-5017</a>
-      
-     <!-- 
-      <h1>Sharad Sharma, Ph. D.</h1>
-      <h2>Professor in Department of Information Science at University of North Texas</h2>
-      <h2>College of Information</h2>
-      <h2>Discovery Park, suite E292C, Denton, TX, USA, 76203-5017 </h2>
-      -->
-      <a href="about.html" class="btn-about">About Me</a>
-    </div>
-  </section><!-- End Hero -->
-
-  <!-- ======= Footer ======= -->
-  <footer id="footer">
-    <div class="container">
-      <div class="copyright">
-        &copy; Copyright<strong> Sharad Sharma</strong>. All Rights Reserved
-      </div>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/kelly-free-bootstrap-cv-resume-html-template/ -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+<header>
+  <div class="nav">
+    <div class="brand">
+      <div class="avatar">JS</div>
+      <div>
+        <strong>Juan P. Sotomayor</strong><br/>
+        <span style="font-size:12px;color:var(--muted)">
+          Department Chair • Software Engineering • AI/ML • Cloud
+        </span>
       </div>
     </div>
-  </footer><!-- End  Footer -->
 
-  <div id="preloader"></div>
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <div class="links">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#teaching">Teaching</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</header>
 
-  <!-- Vendor JS Files -->
-  <script src="assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
-  <script src="assets/vendor/purecounter/purecounter.js"></script>
-  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
+<main class="wrap">
 
-  <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
+<section class="hero">
+  <h1>Building practical software systems & applied AI — and teaching others to do the same.</h1>
+  <p>
+    I am a university department chair and educator specializing in software engineering,
+    artificial intelligence, cloud technologies, and applied machine learning. My work bridges
+    academic leadership (curriculum design, assessment, accreditation alignment) with hands-on
+    systems engineering including microservices architectures, API design, quality tooling,
+    and machine learning applications.
+  </p>
+
+  <a class="btn" href="#projects">View Projects</a>
+  <a class="btn" href="https://github.com/jusoto" target="_blank">GitHub</a>
+  <a class="btn" href="resume.pdf" target="_blank">Resume</a>
+</section>
+
+<section id="about" class="grid">
+  <div class="card">
+    <h2>About</h2>
+    <p>
+      My focus is on designing industry-aligned computing programs that integrate
+      AI/ML, cloud computing, and software engineering best practices. I develop
+      structured learning experiences built around measurable outcomes, hands-on
+      labs, and real distributed systems.
+    </p>
+    <p>
+      Technically, I work extensively with microservices systems, containerized
+      environments, authentication services, REST APIs, databases, and applied
+      machine learning workflows.
+    </p>
+  </div>
+</section>
+
+<section id="projects" class="grid">
+  <div class="card">
+    <h2>Selected Projects</h2>
+
+    <p><strong>Rideshare (Microservices Platform)</strong><br/>
+      Distributed ride-hailing style system used for architecture, testing,
+      and observability experiments.
+    </p>
+
+    <br/>
+
+    <p><strong>Train Ticket (Microservices System)</strong><br/>
+      Service-based ticketing platform used for integration testing,
+      CI workflows, and quality metrics experimentation.
+    </p>
+
+    <br/>
+
+    <p><strong>Piggymetrics (Finance Microservices)</strong><br/>
+      Authentication-driven personal finance microservices project
+      demonstrating service communication and API flows.
+    </p>
+
+    <br/>
+
+    <p><strong>Machine Learning Labs & Notebooks</strong><br/>
+      Applied ML coursework materials covering model evaluation,
+      feature engineering, and implementation workflows.
+    </p>
+  </div>
+</section>
+
+<section id="teaching" class="grid">
+  <div class="card">
+    <h2>Teaching Areas</h2>
+    <p>• Machine Learning & Advanced ML</p>
+    <p>• Data Mining</p>
+    <p>• Cloud Technologies</p>
+    <p>• Software Engineering & Testing</p>
+    <p>• Programming Fundamentals</p>
+  </div>
+</section>
+
+<section id="contact" class="grid">
+  <div class="card">
+    <h2>Contact</h2>
+    <p>Email: <a href="mailto:jusoto@gmail.com">jusoto@gmail.com</a></p>
+    <p>GitHub: <a href="https://github.com/jusoto" target="_blank">github.com/jusoto</a></p>
+    <p>LinkedIn: <a href="https://www.linkedin.com/in/juan-sotomayor-3514a35a" target="_blank">
+      linkedin.com/in/juan-sotomayor-3514a35a</a></p>
+  </div>
+</section>
+
+<footer>
+  © <span id="year"></span> Juan P. Sotomayor. Hosted on GitHub Pages.
+</footer>
+
+</main>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
 
 </body>
-
 </html>

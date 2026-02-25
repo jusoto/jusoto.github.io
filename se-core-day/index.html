@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SE Core Day — Keiser University</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --accent: #f97316;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --border: rgba(255,255,255,0.08);
+    --card: rgba(255,255,255,0.04);
+    --glow: rgba(249,115,22,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* GLOW ORBS */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 400px; height: 400px; background: var(--accent); top: -100px; right: -100px; }
+  .orb2 { width: 350px; height: 350px; background: var(--accent2); bottom: -80px; left: -80px; }
+
+  /* HEADER */
+  header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 56px 20px 32px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 4px 12px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-top: 12px;
+    font-family: 'DM Mono', monospace;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px 20px 0;
+    position: relative;
+    z-index: 10;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+
+  .tab-btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(8px);
+    letter-spacing: 0.02em;
+  }
+
+  .tab-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 0 24px rgba(249,115,22,0.4);
+  }
+
+  /* MAIN CONTENT */
+  main {
+    position: relative;
+    z-index: 10;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  .panel { display: none; animation: fadeUp 0.4s ease both; }
+  .panel.active { display: block; }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    backdrop-filter: blur(12px);
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* ===================== MOOD GUESSER ===================== */
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .emoji-btn {
+    font-size: 1.8rem;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 12px 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .emoji-btn:hover { transform: scale(1.15); background: rgba(255,255,255,0.08); }
+  .emoji-btn.selected {
+    border-color: var(--accent);
+    background: rgba(249,115,22,0.15);
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(249,115,22,0.3);
+  }
+
+  .selected-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 52px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .selected-bar .hint { font-size: 0.8rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .result-box {
+    background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(56,189,248,0.08));
+    border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 12px;
+    padding: 24px;
+    display: none;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .result-box.show { display: block; }
+
+  .mood-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .confidence-bar-wrap {
+    background: rgba(255,255,255,0.06);
+    border-radius: 99px;
+    height: 8px;
+    overflow: hidden;
+    margin: 10px 0 6px;
+  }
+
+  .confidence-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(.4,0,.2,1);
+    width: 0;
+  }
+
+  .conf-label { font-size: 0.78rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .mood-insight { margin-top: 12px; color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; }
+
+  /* ===================== PATHWAY ===================== */
+  .q-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .q-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .q-opt {
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    transition: all 0.15s;
+    text-align: left;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .q-opt:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.07); }
+  .q-opt.selected { border-color: var(--accent2); background: rgba(56,189,248,0.1); color: var(--accent2); }
+
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    border: 1px solid var(--muted);
+    transition: all 0.3s;
+  }
+
+  .dot.done { background: var(--accent); border-color: var(--accent); }
+  .dot.active { background: var(--accent2); border-color: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
+
+  .pathway-result {
+    display: none;
+    animation: fadeUp 0.4s ease both;
+  }
+  .pathway-result.show { display: block; }
+
+  .pathway-card {
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pathway-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+  }
+
+  .pw-web { background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(16,185,129,0.08)); border: 1px solid rgba(56,189,248,0.3); }
+  .pw-backend { background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(239,68,68,0.08)); border: 1px solid rgba(249,115,22,0.3); }
+  .pw-data { background: linear-gradient(135deg, rgba(167,139,250,0.15), rgba(236,72,153,0.08)); border: 1px solid rgba(167,139,250,0.3); }
+  .pw-cloud { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.08)); border: 1px solid rgba(16,185,129,0.3); }
+
+  .pathway-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .pathway-desc { color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; margin-bottom: 16px; }
+
+  .courses-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .course-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .course-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  /* ===================== CONFIDENCE COACH ===================== */
+  .skill-row {
+    margin-bottom: 28px;
+  }
+
+  .skill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .skill-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .skill-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    min-width: 28px;
+    text-align: right;
+  }
+
+  .skill-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    appearance: none;
+    height: 6px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.08);
+    outline: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(249,115,22,0.5);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  .plan-output {
+    display: none;
+    animation: fadeUp 0.4s ease both;
+  }
+  .plan-output.show { display: block; }
+
+  .plan-day {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .plan-day:last-child { border-bottom: none; }
+
+  .day-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    min-width: 32px;
+    padding-top: 2px;
+  }
+
+  .day-content { flex: 1; }
+
+  .day-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+  }
+
+  .day-detail { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+
+  /* BUTTONS */
+  .btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 20px rgba(249,115,22,0.3);
+  }
+
+  .btn-primary:hover {
+    background: #ea6c0a;
+    transform: translateY(-1px);
+    box-shadow: 0 0 28px rgba(249,115,22,0.5);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .btn-download {
+    background: linear-gradient(135deg, var(--accent2), var(--accent3));
+    color: white;
+    box-shadow: 0 0 20px rgba(56,189,248,0.25);
+  }
+
+  .btn-download:hover { transform: translateY(-1px); opacity: 0.9; }
+
+  /* UTILS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    position: relative;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<header>
+  <div class="badge">🎓 Keiser University · Software Engineering Core Day</div>
+  <h1>Build Your <span>SE Journey</span></h1>
+  <p class="subtitle">Three interactive tools · Zero login required · 100% yours</p>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="switchTab('mood', this)">😀 Mood Guesser</button>
+  <button class="tab-btn" onclick="switchTab('pathway', this)">🧭 SE Pathway</button>
+  <button class="tab-btn" onclick="switchTab('coach', this)">📚 Confidence Coach</button>
+</nav>
+
+<main>
+
+  <!-- ===== MOOD GUESSER ===== -->
+  <div id="panel-mood" class="panel active">
+    <div class="card">
+      <div class="card-title">😀 Emoji Mood Guesser</div>
+      <div class="card-desc">Tap up to 3 emojis that match your vibe right now. Our tiny heuristic engine will predict your overall mood!</div>
+
+      <div class="emoji-grid" id="emojiGrid"></div>
+
+      <div class="selected-bar" id="selectedBar">
+        <span class="hint">Your picks will appear here…</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="guessMood()">✨ Guess My Mood</button>
+        <button class="btn btn-secondary" onclick="resetMood()">Reset</button>
+      </div>
+
+      <div class="result-box" id="moodResult">
+        <div class="mood-label" id="moodLabel"></div>
+        <div style="color: var(--muted); font-size:0.8rem; font-family:'DM Mono',monospace; margin-bottom:4px;">Confidence</div>
+        <div class="confidence-bar-wrap">
+          <div class="confidence-bar" id="confBar"></div>
+        </div>
+        <div class="conf-label" id="confLabel"></div>
+        <div class="mood-insight" id="moodInsight"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SE PATHWAY ===== -->
+  <div id="panel-pathway" class="panel">
+    <div class="card">
+      <div class="card-title">🧭 SE Pathway Recommender</div>
+      <div class="card-desc">4 quick questions → your personalized software engineering track + starter resources.</div>
+
+      <div class="progress-dots" id="progressDots"></div>
+
+      <div id="questionArea"></div>
+
+      <div class="pathway-result" id="pathwayResult"></div>
+    </div>
+  </div>
+
+  <!-- ===== CONFIDENCE COACH ===== -->
+  <div id="panel-coach" class="panel">
+    <div class="card">
+      <div class="card-title">📚 Confidence Coach</div>
+      <div class="card-desc">Rate your current confidence (1 = just starting, 5 = solid) in each area. We'll generate a personalized 7-day micro-plan.</div>
+
+      <div class="skill-row">
+        <div class="skill-header">
+          <span class="skill-name">🐍 Python</span>
+          <span class="skill-val" id="pyVal">3</span>
+        </div>
+        <input type="range" min="1" max="5" value="3" id="pyRange" oninput="updateSlider('py')">
+        <div class="skill-labels"><span>Just Starting</span><span>Confident</span></div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-header">
+          <span class="skill-name">☕ Java</span>
+          <span class="skill-val" id="javaVal">3</span>
+        </div>
+        <input type="range" min="1" max="5" value="3" id="javaRange" oninput="updateSlider('java')">
+        <div class="skill-labels"><span>Just Starting</span><span>Confident</span></div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-header">
+          <span class="skill-name">📐 Math / DSA</span>
+          <span class="skill-val" id="mathVal">3</span>
+        </div>
+        <input type="range" min="1" max="5" value="3" id="mathRange" oninput="updateSlider('math')">
+        <div class="skill-labels"><span>Just Starting</span><span>Confident</span></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="generatePlan()">🚀 Generate My 7-Day Plan</button>
+      </div>
+
+      <div class="plan-output" id="planOutput">
+        <div class="divider"></div>
+        <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:16px;">Your 7-Day Micro-Plan</div>
+        <div id="planDays"></div>
+        <div class="btn-row" style="margin-top:20px;">
+          <button class="btn btn-download" onclick="downloadPlan()">⬇ Download Plan (.txt)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>Made with ❤️ for Keiser University SE Core Day · Not data is stored · Everything runs in your browser</footer>
+
+<script>
+// ===== TAB SWITCHING =====
+function switchTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ===== MOOD GUESSER =====
+const EMOJIS = [
+  { e:'😀', tags:['happy','energetic','positive'] },
+  { e:'😎', tags:['confident','cool','focused'] },
+  { e:'🤔', tags:['curious','thoughtful','uncertain'] },
+  { e:'😴', tags:['tired','low-energy','burnt-out'] },
+  { e:'🤯', tags:['overwhelmed','excited','mind-blown'] },
+  { e:'😤', tags:['frustrated','determined','stressed'] },
+  { e:'🥳', tags:['celebratory','social','pumped'] },
+  { e:'😬', tags:['nervous','anxious','unsure'] },
+  { e:'🙃', tags:['weird','confused','ironic'] },
+  { e:'💪', tags:['motivated','strong','ready'] },
+  { e:'🫠', tags:['exhausted','melting','overwhelmed'] },
+  { e:'✨', tags:['hopeful','inspired','creative'] },
+  { e:'😶‍🌫️', tags:['zoned-out','detached','foggy'] },
+  { e:'🚀', tags:['energetic','ambitious','excited'] },
+  { e:'😵‍💫', tags:['dizzy','confused','overwhelmed'] },
+  { e:'🤓', tags:['studious','focused','curious'] },
+  { e:'😏', tags:['confident','cheeky','relaxed'] },
+  { e:'🥺', tags:['vulnerable','hopeful','gentle'] },
+];
+
+const MOODS = [
+  { label: '⚡ High Energy & Pumped', tags: ['energetic','motivated','excited','pumped','ambitious','strong','ready'], color: '#f97316', insight: "You're radiating momentum today! Perfect time to tackle that challenging project or dive into a new concept." },
+  { label: '🧘 Calm & Focused', tags: ['focused','cool','confident','studious','cheeky','relaxed'], color: '#38bdf8', insight: "You're in the zone. Use this clarity to work through complex problems or plan your learning roadmap." },
+  { label: '🤯 Buzzing with Ideas', tags: ['curious','mind-blown','creative','inspired','hopeful','thoughtful'], color: '#a78bfa', insight: "Your mind is sparking! This is great energy for brainstorming, exploring new tech, or starting a side project." },
+  { label: '😰 A Little Stressed', tags: ['stressed','nervous','anxious','unsure','uncertain','frustrated','overwhelmed'], color: '#fb7185', insight: "Totally normal at Core Day! Take a breath. Break big things into small steps. You belong here." },
+  { label: '😴 Running Low', tags: ['tired','low-energy','burnt-out','exhausted','melting','foggy'], color: '#94a3b8', insight: "Respect the battery level. Maybe grab water, eat something, and pick one small win to focus on today." },
+  { label: '🙃 Chaotically Curious', tags: ['weird','confused','ironic','dizzy','zoned-out','detached'], color: '#4ade80', insight: "Beautifully chaotic! Sometimes the most unexpected headspace leads to the best creative breakthroughs." },
+  { label: '🥺 Quietly Hopeful', tags: ['vulnerable','gentle','social','celebratory'], color: '#f472b6', insight: "Soft energy is still real energy. Lean into collaboration today — talk to a classmate or your instructor." },
+];
+
+let selectedEmojis = [];
+
+function buildEmojiGrid() {
+  const grid = document.getElementById('emojiGrid');
+  EMOJIS.forEach((item, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-btn';
+    btn.textContent = item.e;
+    btn.title = item.tags.join(', ');
+    btn.dataset.index = i;
+    btn.onclick = () => toggleEmoji(i, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function toggleEmoji(i, btn) {
+  const idx = selectedEmojis.indexOf(i);
+  if (idx > -1) {
+    selectedEmojis.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    if (selectedEmojis.length >= 3) return;
+    selectedEmojis.push(i);
+    btn.classList.add('selected');
+  }
+  updateSelectedBar();
+  document.getElementById('moodResult').classList.remove('show');
+}
+
+function updateSelectedBar() {
+  const bar = document.getElementById('selectedBar');
+  if (selectedEmojis.length === 0) {
+    bar.innerHTML = '<span class="hint">Your picks will appear here…</span>';
+  } else {
+    bar.innerHTML = selectedEmojis.map(i => `<span>${EMOJIS[i].e}</span>`).join('') +
+      `<span class="hint" style="margin-left:auto;">${3 - selectedEmojis.length} more slot${3 - selectedEmojis.length !== 1 ? 's' : ''}</span>`;
+  }
+}
+
+function guessMood() {
+  if (selectedEmojis.length === 0) { alert('Pick at least one emoji!'); return; }
+
+  const tagCounts = {};
+  selectedEmojis.forEach(i => {
+    EMOJIS[i].tags.forEach(t => tagCounts[t] = (tagCounts[t] || 0) + 1);
+  });
+
+  const scores = MOODS.map(mood => {
+    let score = 0;
+    mood.tags.forEach(t => { if (tagCounts[t]) score += tagCounts[t]; });
+    return score;
+  });
+
+  const maxScore = Math.max(...scores);
+  const total = scores.reduce((a, b) => a + b, 0) || 1;
+  const bestIdx = scores.indexOf(maxScore);
+  const best = MOODS[bestIdx];
+  const confidence = Math.round((maxScore / (selectedEmojis.length * 3)) * 100);
+  const displayConf = Math.max(42, Math.min(97, confidence + Math.floor(Math.random() * 18)));
+
+  document.getElementById('moodLabel').textContent = best.label;
+  document.getElementById('moodLabel').style.color = best.color;
+  document.getElementById('confLabel').textContent = `${displayConf}% confidence · based on ${selectedEmojis.length} emoji${selectedEmojis.length > 1 ? 's' : ''}`;
+  document.getElementById('moodInsight').textContent = best.insight;
+
+  const result = document.getElementById('moodResult');
+  result.classList.add('show');
+  result.style.borderColor = best.color + '60';
+
+  setTimeout(() => {
+    document.getElementById('confBar').style.width = displayConf + '%';
+  }, 100);
+}
+
+function resetMood() {
+  selectedEmojis = [];
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  updateSelectedBar();
+  document.getElementById('moodResult').classList.remove('show');
+  document.getElementById('confBar').style.width = '0';
+}
+
+buildEmojiGrid();
+
+// ===== SE PATHWAY =====
+const QUESTIONS = [
+  {
+    q: "What kind of problems excite you most?",
+    opts: [
+      { text: "Building beautiful interfaces people interact with", tags: { web: 3 } },
+      { text: "Making systems fast, reliable & scalable", tags: { backend: 3 } },
+      { text: "Discovering insights hidden in data", tags: { data: 3 } },
+      { text: "Automating infrastructure and deployments", tags: { cloud: 3 } },
+    ]
+  },
+  {
+    q: "Which scenario sounds most like you?",
+    opts: [
+      { text: "I love tweaking CSS until a layout is pixel-perfect", tags: { web: 3 } },
+      { text: "I enjoy designing how data flows between systems", tags: { backend: 3, cloud: 1 } },
+      { text: "I get lost in spreadsheets and find patterns fun", tags: { data: 3 } },
+      { text: "I love configuring servers and writing shell scripts", tags: { cloud: 3, backend: 1 } },
+    ]
+  },
+  {
+    q: "Pick your favorite class or topic so far:",
+    opts: [
+      { text: "Web Design / UI/UX / Visual Design", tags: { web: 3 } },
+      { text: "OOP, APIs, Databases, or Algorithms", tags: { backend: 3, data: 1 } },
+      { text: "Statistics, ML concepts, or data analysis", tags: { data: 3 } },
+      { text: "Networking, Linux, or IT infrastructure", tags: { cloud: 3 } },
+    ]
+  },
+  {
+    q: "What's your career vibe?",
+    opts: [
+      { text: "I want users to say 'wow' when they open my app", tags: { web: 3 } },
+      { text: "I want to build the engine powering the app", tags: { backend: 3 } },
+      { text: "I want to help companies make smarter decisions", tags: { data: 3 } },
+      { text: "I want to keep the whole system up and running", tags: { cloud: 3, backend: 1 } },
+    ]
+  },
+];
+
+const PATHWAYS = {
+  web: {
+    name: '🌐 Web Development',
+    cls: 'pw-web',
+    color: '#38bdf8',
+    desc: "You are drawn to the intersection of design and code. Web devs craft experiences that millions interact with daily — from slick landing pages to complex React applications.",
+    courses: ['HTML/CSS Mastery', 'JavaScript ES6+', 'React.js', 'Responsive Design', 'Node.js Basics', 'Figma/UI Design'],
+    certs: ['Meta Front-End Dev (Coursera)', 'freeCodeCamp Web Dev'],
+  },
+  backend: {
+    name: '⚙️ Backend Engineering',
+    cls: 'pw-backend',
+    color: '#f97316',
+    desc: "You are all about the logic under the hood. Backend engineers architect APIs, wrangle databases, and build the systems that power everything users see.",
+    courses: ['Java Advanced OOP', 'REST API Design', 'SQL & NoSQL DBs', 'Spring Boot', 'System Design', 'Data Structures'],
+    certs: ['Oracle Java SE Cert', 'AWS Developer Associate'],
+  },
+  data: {
+    name: '📊 Data / AI Engineering',
+    cls: 'pw-data',
+    color: '#a78bfa',
+    desc: 'You love turning raw numbers into meaningful stories. Data engineers and AI developers build the pipelines, models, and dashboards that drive modern decisions.',
+    courses: ['Python for Data Science', 'Pandas & NumPy', 'Statistics & Probability', 'Machine Learning Basics', 'SQL Analytics', 'Jupyter & Colab'],
+    certs: ['Google Data Analytics (Coursera)', 'IBM Data Science Cert'],
+  },
+  cloud: {
+    name: '☁️ Cloud / DevOps',
+    cls: 'pw-cloud',
+    color: '#4ade80',
+    desc: 'You think in systems. DevOps and cloud engineers are the architects of reliability — orchestrating containers, automating pipelines, and keeping apps alive at scale.',
+    courses: ['Linux Command Line', 'Docker & Kubernetes', 'CI/CD Pipelines', 'AWS/GCP Fundamentals', 'Terraform Basics', 'Networking Essentials'],
+    certs: ['AWS Cloud Practitioner', 'Google Associate Cloud Engineer'],
+  },
+};
+
+let answers = {};
+let currentQ = 0;
+
+function buildPathway() {
+  currentQ = 0;
+  answers = {};
+  renderQuestion();
+  renderDots();
+}
+
+function renderDots() {
+  const dots = document.getElementById('progressDots');
+  dots.innerHTML = QUESTIONS.map((_, i) =>
+    `<div class="dot ${i < currentQ ? 'done' : i === currentQ ? 'active' : ''}"></div>`
+  ).join('');
+}
+
+function renderQuestion() {
+  const area = document.getElementById('questionArea');
+  const q = QUESTIONS[currentQ];
+  area.innerHTML = `
+    <div class="q-number">QUESTION ${currentQ + 1} OF ${QUESTIONS.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="q-options">
+      ${q.opts.map((o, i) => `<button class="q-opt" onclick="selectOpt(${i})">${o.text}</button>`).join('')}
+    </div>
+  `;
+  document.getElementById('pathwayResult').classList.remove('show');
+}
+
+function selectOpt(i) {
+  const q = QUESTIONS[currentQ];
+  const opt = q.opts[i];
+
+  // Accumulate scores
+  Object.entries(opt.tags).forEach(([k, v]) => {
+    answers[k] = (answers[k] || 0) + v;
+  });
+
+  // Highlight briefly
+  document.querySelectorAll('.q-opt')[i].classList.add('selected');
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < QUESTIONS.length) {
+      renderQuestion();
+      renderDots();
+    } else {
+      showPathwayResult();
+    }
+  }, 280);
+}
+
+function showPathwayResult() {
+  const sorted = Object.entries(answers).sort((a, b) => b[1] - a[1]);
+  const topKey = sorted[0]?.[0] || 'web';
+  const top = PATHWAYS[topKey];
+  const total = Object.values(answers).reduce((a, b) => a + b, 0) || 1;
+
+  const area = document.getElementById('questionArea');
+  area.innerHTML = '';
+  renderDots();
+
+  const result = document.getElementById('pathwayResult');
+  result.innerHTML = `
+    <div class="pathway-card ${top.cls}">
+      <div class="pathway-name" style="color:${top.color}">${top.name}</div>
+      <div class="pathway-desc">${top.desc}</div>
+      <div class="courses-label">🎯 Starter Courses & Skills</div>
+      <div class="course-tags">${top.courses.map(c => `<span class="course-tag">${c}</span>`).join('')}</div>
+      <div class="divider" style="margin:16px 0;"></div>
+      <div class="courses-label">📜 Recommended Certifications</div>
+      <div class="course-tags">${top.certs.map(c => `<span class="course-tag" style="border-color:${top.color}40; background:${top.color}10">${c}</span>`).join('')}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="buildPathway()">🔄 Retake Quiz</button>
+    </div>
+  `;
+  result.classList.add('show');
+}
+
+buildPathway();
+
+// ===== CONFIDENCE COACH =====
+function updateSlider(key) {
+  const val = document.getElementById(key + 'Range').value;
+  document.getElementById(key + 'Val').textContent = val;
+}
+
+function generatePlan() {
+  const py = parseInt(document.getElementById('pyRange').value);
+  const java = parseInt(document.getElementById('javaRange').value);
+  const math = parseInt(document.getElementById('mathRange').value);
+
+  const plan = buildPlan(py, java, math);
+
+  const daysEl = document.getElementById('planDays');
+  daysEl.innerHTML = plan.map((d, i) => `
+    <div class="plan-day">
+      <div class="day-num">DAY ${i + 1}</div>
+      <div class="day-content">
+        <div class="day-title">${d.title}</div>
+        <div class="day-detail">${d.detail}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('planOutput').classList.add('show');
+  window._currentPlan = { py, java, math, plan };
+}
+
+function buildPlan(py, java, math) {
+  const pyFocus = py <= 2, javaFocus = java <= 2, mathFocus = math <= 2;
+
+  const pythonDays = {
+    low: [
+      { title: '🐍 Python Foundations', detail: 'Install Python, run your first script. Practice variables, if/else, and loops. Resource: python.org/about/gettingstarted' },
+      { title: '🐍 Functions & Lists', detail: 'Write 5 small functions. Explore lists, dicts, and loops. Try: FreeCodeCamp Python course (free).' },
+    ],
+    mid: [
+      { title: '🐍 Python Level-Up', detail: 'Practice list comprehensions, file I/O, and one small project (e.g., a simple calculator or quiz app).' },
+    ],
+    high: [
+      { title: '🐍 Python Deep Dive', detail: 'Explore OOP in Python, decorators, or pick a library (Pandas, Flask, etc.) and build something small.' },
+    ]
+  };
+
+  const javaDays = {
+    low: [
+      { title: '☕ Java Basics', detail: 'Set up IntelliJ or VS Code. Write Hello World, practice data types, conditionals, and basic loops.' },
+      { title: '☕ OOP in Java', detail: 'Create 2 classes with methods. Understand inheritance and interfaces. Ref: Codecademy Java course.' },
+    ],
+    mid: [
+      { title: '☕ Java Practice', detail: 'Solve 3 coding challenges (HackerRank Java). Focus on arrays, ArrayLists, and String manipulation.' },
+    ],
+    high: [
+      { title: '☕ Java Advanced', detail: 'Explore Java Streams, Generics, or start a Spring Boot "Hello World" REST API.' },
+    ]
+  };
+
+  const mathDays = {
+    low: [
+      { title: '📐 DSA Foundations', detail: 'Study Big-O notation basics. Implement a linear search and binary search in your preferred language.' },
+      { title: '📐 Core Data Structures', detail: 'Code a stack and a queue from scratch. Watch a 20-min YouTube explainer on linked lists.' },
+    ],
+    mid: [
+      { title: '📐 Algorithm Practice', detail: 'Solve 2 LeetCode "Easy" problems. Focus on arrays or strings. Reflect on your approach, not just the answer.' },
+    ],
+    high: [
+      { title: '📐 DSA Challenge Day', detail: 'Tackle a LeetCode "Medium" problem. Review a sorting algorithm (merge sort or quicksort) and implement it.' },
+    ]
+  };
+
+  const pyKey = py <= 2 ? 'low' : py === 3 ? 'mid' : 'high';
+  const javaKey = java <= 2 ? 'low' : java === 3 ? 'mid' : 'high';
+  const mathKey = math <= 2 ? 'low' : math === 3 ? 'mid' : 'high';
+
+  let days = [];
+  days = days.concat(pythonDays[pyKey]);
+  days = days.concat(javaDays[javaKey]);
+  days = days.concat(mathDays[mathKey]);
+
+  // Fill to 7 days
+  const extras = [
+    { title: '🔗 Connect the Dots', detail: 'Pick one concept from each area and explain it in plain English in a journal or notes app. Teaching cements learning.' },
+    { title: '🛠 Build Something Small', detail: 'Use Python or Java to build a micro-project: number guessing game, todo list, or temperature converter.' },
+    { title: '🤝 Community Day', detail: 'Join r/learnprogramming, a Discord server, or talk to a classmate. Share one thing you learned this week.' },
+    { title: '🎯 Week Wrap-Up', detail: 'Review your 7 days. Rate your confidence again (1–5). Identify your #1 next step. You\'ve already grown!' },
+    { title: '📖 Read & Reflect', detail: 'Read one developer blog post or documentation page you\'ve been putting off. Jot 3 takeaways.' },
+  ];
+
+  while (days.length < 7) {
+    days.push(extras[days.length - 3] || extras[extras.length - 1]);
+  }
+
+  return days.slice(0, 7);
+}
+
+function downloadPlan() {
+  const { py, java, math, plan } = window._currentPlan || {};
+  const lines = [
+    '===========================================',
+    '  MY 7-DAY SE MICRO-PLAN — KEISER UNIVERSITY',
+    '  Generated by SE Core Day Interactive Tools',
+    '===========================================',
+    '',
+    `Confidence Ratings: Python ${py}/5 | Java ${java}/5 | Math/DSA ${math}/5`,
+    '',
+    ...plan.flatMap((d, i) => [
+      `--- DAY ${i + 1}: ${d.title} ---`,
+      d.detail,
+      '',
+    ]),
+    '===========================================',
+    '  Keep going — every expert was once a beginner.',
+    '===========================================',
+  ];
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'my-7-day-se-plan.txt';
+  a.click();
+}
+</script>
+</body>
+</html>
