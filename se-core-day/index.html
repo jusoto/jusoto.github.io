@@ -533,6 +533,12 @@
     position: relative;
     z-index: 10;
   }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Adds spacing between elements */
+  }
 </style>
 </head>
 <body>
@@ -541,9 +547,15 @@
 <div class="orb orb2"></div>
 
 <header>
-  <div class="badge">🎓 Keiser University · Software Engineering Core Day</div>
+  <div class="badge">
+    <div><img src="KU/keiser-university-logo-png-transparent.png" width="100px" /></div>
+    <div class="container">
+      <div style="color: #f1f5f9;">Keiser University</div>
+      <div style="color: #f1f5f9;">College of Advanced Technology</div>
+      <span>SE Core Day</span>
+    </div>
+  </div>
   <h1>Build Your <span>SE Journey</span></h1>
-  <p class="subtitle">Three interactive tools · Zero login required · 100% yours</p>
 </header>
 
 <nav>
