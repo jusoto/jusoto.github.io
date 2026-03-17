@@ -1,0 +1,515 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.app{padding:1rem 0}
+.tabs{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;font-size:13px;font-weight:400;color:var(--color-text-secondary);transition:all .15s}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.tab:hover:not(.active){border-color:var(--color-border-primary);color:var(--color-text-primary)}
+.panel{display:none}.panel.active{display:block}
+.section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-secondary);margin-bottom:.75rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem}
+.card-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem}
+@media(max-width:520px){.card-row{grid-template-columns:1fr}}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.875rem;text-align:center}
+.metric-val{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.metric-lab{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--border-radius-md)}
+.badge-info{background:var(--color-background-info);color:var(--color-text-info)}
+.badge-success{background:var(--color-background-success);color:var(--color-text-success)}
+.badge-warn{background:var(--color-background-warning);color:var(--color-text-warning)}
+.badge-danger{background:var(--color-background-danger);color:var(--color-text-danger)}
+.progress-bar{height:6px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;background:var(--color-text-info);border-radius:3px;transition:width .4s ease}
+h3{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+p{font-size:14px;color:var(--color-text-secondary);line-height:1.65;margin-bottom:.75rem}
+p:last-child{margin-bottom:0}
+hr{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1rem 0}
+.btn{padding:8px 18px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;font-size:13px;font-weight:400;color:var(--color-text-primary);transition:all .15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--color-text-primary);color:var(--color-background-primary);border-color:transparent}
+.btn-primary:hover{opacity:.85}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:.75rem}
+
+/* ─── FAST/SLOW QUIZ ─── */
+.quiz-q{font-size:17px;font-weight:500;color:var(--color-text-primary);text-align:center;padding:1.5rem 1rem;min-height:80px;display:flex;align-items:center;justify-content:center}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quiz-opt{padding:12px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;font-size:14px;color:var(--color-text-primary);text-align:left;transition:all .15s}
+.quiz-opt:hover:not(:disabled){background:var(--color-background-secondary);border-color:var(--color-border-primary)}
+.quiz-opt.correct{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.quiz-opt.wrong{background:var(--color-background-danger);border-color:var(--color-border-danger);color:var(--color-text-danger)}
+.quiz-opt:disabled{cursor:default}
+.quiz-feedback{text-align:center;font-size:14px;color:var(--color-text-secondary);margin-top:.75rem;min-height:40px;padding:.5rem}
+.quiz-progress{display:flex;gap:6px;justify-content:center;margin-bottom:1rem}
+.quiz-dot{width:8px;height:8px;border-radius:50%;background:var(--color-border-secondary);transition:background .25s}
+.quiz-dot.done-correct{background:var(--color-text-success)}
+.quiz-dot.done-wrong{background:var(--color-text-danger)}
+.quiz-dot.current{background:var(--color-text-primary)}
+
+/* ─── DRAG & DROP ─── */
+.dnd-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1rem}
+.dnd-zone{min-height:120px;border:0.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:10px;transition:all .15s}
+.dnd-zone.over{border-color:var(--color-text-info);background:var(--color-background-info)}
+.dnd-zone-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px;text-align:center}
+.dnd-cards{display:flex;flex-direction:column;gap:6px;flex-wrap:wrap}
+.dnd-card{padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-primary);cursor:grab;user-select:none;transition:all .15s}
+.dnd-card:hover{border-color:var(--color-border-primary);background:var(--color-background-secondary)}
+.dnd-card.dragging{opacity:.4}
+.dnd-card.correct-placed{border-color:var(--color-border-success);background:var(--color-background-success);color:var(--color-text-success)}
+.dnd-card.wrong-placed{border-color:var(--color-border-danger);background:var(--color-background-danger);color:var(--color-text-danger)}
+.dnd-tray{display:flex;flex-wrap:wrap;gap:6px;min-height:50px;padding:10px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);margin-bottom:.75rem}
+
+/* ─── ATTENTION SIM ─── */
+.attention-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:1rem 0}
+.att-cell{height:40px;border-radius:4px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;transition:all .15s;border:0.5px solid transparent}
+.att-cell:hover{border-color:var(--color-border-secondary)}
+.att-cell.highlight{background:var(--color-background-info);color:var(--color-text-info);font-weight:500;border-color:var(--color-border-info)}
+.att-cell.target{background:var(--color-background-success);color:var(--color-text-success);font-weight:500;border-color:var(--color-border-success)}
+.att-cell.distractor{background:var(--color-background-warning);color:var(--color-text-warning)}
+.att-cell.clicked-wrong{background:var(--color-background-danger);color:var(--color-text-danger)}
+.timer-display{font-size:28px;font-weight:500;text-align:center;color:var(--color-text-primary);font-variant-numeric:tabular-nums}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:14px}
+.result-row:last-child{border-bottom:none}
+
+/* ─── GULF BUILDER ─── */
+.gulf-stage{padding:12px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);margin-bottom:8px;font-size:14px;color:var(--color-text-primary);background:var(--color-background-primary)}
+.gulf-stage.execution{border-left:3px solid var(--color-border-warning)}
+.gulf-stage.evaluation{border-left:3px solid var(--color-border-info)}
+.gulf-stage.good{border-color:var(--color-border-success);background:var(--color-background-success);color:var(--color-text-success)}
+.gulf-stage.bad{border-color:var(--color-border-danger);background:var(--color-background-danger);color:var(--color-text-danger)}
+select{padding:7px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;cursor:pointer;width:100%;margin-top:6px}
+</style>
+
+<div class="app">
+
+<div class="tabs" id="tabs">
+  <button class="tab active" onclick="goTab(0)">Fast vs slow thinking</button>
+  <button class="tab" onclick="goTab(1)">Attention challenge</button>
+  <button class="tab" onclick="goTab(2)">Design implications sort</button>
+  <button class="tab" onclick="goTab(3)">Gulf builder</button>
+</div>
+
+<!-- ══════ TAB 0: FAST vs SLOW ══════ -->
+<div class="panel active" id="panel-0">
+  <p class="section-label">Activity 1 — Fast vs slow thinking quiz</p>
+
+  <div class="card">
+    <div class="quiz-progress" id="quiz-dots"></div>
+    <div class="quiz-q" id="quiz-q">Loading...</div>
+    <div class="quiz-options" id="quiz-opts"></div>
+    <div class="quiz-feedback" id="quiz-fb"></div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn" id="quiz-next" onclick="nextQuizQ()" style="display:none">Next question →</button>
+    </div>
+  </div>
+
+  <div class="card-row" id="quiz-score-row" style="display:none">
+    <div class="metric"><div class="metric-val" id="score-correct">—</div><div class="metric-lab">Correct</div></div>
+    <div class="metric"><div class="metric-val" id="score-system">—</div><div class="metric-lab">Avg thinking type</div></div>
+  </div>
+
+  <div class="card" id="quiz-summary" style="display:none">
+    <h3>What this means for UX</h3>
+    <p>System 1 (fast) thinking handles routine interface interactions — tapping a familiar icon, dismissing a notification. System 2 (slow) kicks in when users hit something unfamiliar or must make a real decision. Good design minimizes unwanted System 2 load: clear labels, consistent patterns, and recognizable affordances keep users in the fast lane where they are happiest.</p>
+    <div class="btn-row">
+      <button class="btn" onclick="resetQuiz()">Try again</button>
+      <button class="btn btn-primary" onclick="goTab(1)">Next activity →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB 1: ATTENTION CHALLENGE ══════ -->
+<div class="panel" id="panel-1">
+  <p class="section-label">Activity 2 — Attention & visual search</p>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:.75rem">
+      <div>
+        <h3 id="att-title">Find the price: Holiday Inn, Columbia</h3>
+        <p style="font-size:13px;margin-bottom:0" id="att-sub">Bunched layout — click the correct cell as fast as you can</p>
+      </div>
+      <div class="timer-display" id="att-timer">0.0s</div>
+    </div>
+
+    <div class="attention-grid" id="att-grid"></div>
+
+    <div id="att-result" style="display:none">
+      <hr>
+      <div class="result-row"><span>Layout 1 (bunched)</span><span id="t1-val" class="badge badge-warn">—</span></div>
+      <div class="result-row"><span>Layout 2 (grouped)</span><span id="t2-val" class="badge badge-success">—</span></div>
+      <div class="result-row"><span>Difference</span><span id="t-diff" class="badge badge-info">—</span></div>
+      <p style="margin-top:.75rem;font-size:13px">Tullis (1987) found that grouped layouts cut search time from 5.5s → 3.2s even at identical information density. The spacing itself encodes structure.</p>
+    </div>
+
+    <div class="btn-row" id="att-btns">
+      <button class="btn btn-primary" id="att-go" onclick="startAttention()">Start round 1</button>
+    </div>
+  </div>
+
+  <div class="card" id="att-design" style="display:none">
+    <h3>Design implications you observed</h3>
+    <p>Spacing and grouping are free — they cost no pixels, no color, no animation — yet they dramatically reduce cognitive load. Every extra second a user spends searching is a second they are not completing their goal. Visual structure is doing the work that labels and instructions never could.</p>
+    <div class="btn-row">
+      <button class="btn" onclick="resetAttention()">Replay</button>
+      <button class="btn btn-primary" onclick="goTab(2)">Next activity →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB 2: DESIGN IMPLICATIONS SORT ══════ -->
+<div class="panel" id="panel-2">
+  <p class="section-label">Activity 3 — Sort design implications by cognitive process</p>
+
+  <div class="card">
+    <p style="margin-bottom:.75rem">Drag each card into the correct cognitive process column. All cards start in the tray below.</p>
+    <div class="dnd-tray" id="dnd-tray"></div>
+    <div class="dnd-board" id="dnd-board"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkDND()">Check answers</button>
+      <button class="btn" onclick="resetDND()">Reset</button>
+    </div>
+    <div id="dnd-feedback" style="margin-top:.75rem;font-size:14px;color:var(--color-text-secondary)"></div>
+  </div>
+</div>
+
+<!-- ══════ TAB 3: GULF BUILDER ══════ -->
+<div class="panel" id="panel-3">
+  <p class="section-label">Activity 4 — Gulf of execution & evaluation builder</p>
+
+  <div class="card">
+    <h3>Scenario</h3>
+    <p>A user wants to export their document as a PDF. For each stage of the interaction, choose whether the design <em>bridges</em> or <em>widens</em> the gulf.</p>
+    <hr>
+
+    <div id="gulf-stages"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkGulfs()">Evaluate design</button>
+      <button class="btn" onclick="resetGulfs()">Reset</button>
+    </div>
+    <div id="gulf-result" style="margin-top:.75rem"></div>
+  </div>
+
+  <div class="card" id="gulf-theory" style="display:none">
+    <h3>Framework recap</h3>
+    <p>The gulf of <strong>execution</strong> is the gap between what the user wants to do and the actions the interface makes available. The gulf of <strong>evaluation</strong> is the gap between what the system did and what the user can perceive. Bridging both requires: clear affordances + immediate, legible feedback.</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+const TABS = 4;
+function goTab(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+}
+
+/* ══ TAB 0: QUIZ ══ */
+const QZ=[
+  {q:'2 + 2 = ?',opts:['4','5','3','22'],ans:0,sys:'System 1',fb:'Instant — no conscious effort needed. This is experiential cognition at work.'},
+  {q:'21 × 29 = ?',opts:['589','609','639','569'],ans:1,sys:'System 2',fb:'You had to work through it step by step. Slow, deliberate, effortful — System 2.'},
+  {q:'What color are stop signs?',opts:['Red','Blue','Yellow','Green'],ans:0,sys:'System 1',fb:'Learned automatically through repeated exposure. Recognition, not recall.'},
+  {q:'Is 71 a prime number?',opts:['Yes','No'],ans:0,sys:'System 2',fb:'Most people check by trial division — conscious, effortful reasoning.'},
+  {q:'What month comes after July?',opts:['June','August','September','October'],ans:1,sys:'System 1',fb:'Overlearned sequence — the answer arrives before you consciously search for it.'},
+  {q:'What is 15% of 340?',opts:['51','47','68','44'],ans:0,sys:'System 2',fb:'Requires deliberate calculation. Even with a shortcut, you had to think.'},
+];
+let qIdx=0,qCorrect=0,qSys={1:0,2:0},qAnswered=false;
+
+function initQuiz(){
+  qIdx=0;qCorrect=0;qSys={1:0,2:0};qAnswered=false;
+  const dots=document.getElementById('quiz-dots');
+  dots.innerHTML=QZ.map((_,i)=>`<div class="quiz-dot ${i===0?'current':''}" id="qdot-${i}"></div>`).join('');
+  renderQuizQ();
+  document.getElementById('quiz-score-row').style.display='none';
+  document.getElementById('quiz-summary').style.display='none';
+}
+function renderQuizQ(){
+  const q=QZ[qIdx];
+  document.getElementById('quiz-q').textContent=q.q;
+  const opts=document.getElementById('quiz-opts');
+  opts.innerHTML=q.opts.map((o,i)=>
+    `<button class="quiz-opt" onclick="answerQ(${i})" id="qopt-${i}">${o}</button>`
+  ).join('');
+  document.getElementById('quiz-fb').textContent='';
+  document.getElementById('quiz-next').style.display='none';
+  qAnswered=false;
+}
+function answerQ(i){
+  if(qAnswered)return;
+  qAnswered=true;
+  const q=QZ[qIdx];
+  const correct=i===q.ans;
+  if(correct){qCorrect++;qSys[q.sys==='System 1'?1:2]++}
+  q.opts.forEach((_,j)=>{
+    const b=document.getElementById('qopt-'+j);
+    b.disabled=true;
+    if(j===q.ans)b.classList.add('correct');
+    else if(j===i)b.classList.add('wrong');
+  });
+  document.getElementById('quiz-fb').textContent=(correct?'✓ Correct — ':' Incorrect — ')+q.sys+'. '+q.fb;
+  document.getElementById('qdot-'+qIdx).classList.add(correct?'done-correct':'done-wrong');
+  document.getElementById('qdot-'+qIdx).classList.remove('current');
+  if(qIdx<QZ.length-1){
+    document.getElementById('quiz-next').style.display='';
+  } else {
+    setTimeout(showQuizSummary,600);
+  }
+}
+function nextQuizQ(){
+  qIdx++;
+  if(qIdx<QZ.length){
+    const d=document.getElementById('qdot-'+qIdx);
+    if(d)d.classList.add('current');
+    renderQuizQ();
+  }
+}
+function showQuizSummary(){
+  document.getElementById('quiz-score-row').style.display='grid';
+  document.getElementById('quiz-summary').style.display='block';
+  document.getElementById('score-correct').textContent=qCorrect+'/'+QZ.length;
+  const s1=qSys[1],s2=qSys[2];
+  document.getElementById('score-system').textContent=s1>=s2?'System 1':'System 2';
+}
+function resetQuiz(){initQuiz();}
+initQuiz();
+
+/* ══ TAB 1: ATTENTION ══ */
+const ATT_HOTELS=['Comfort Inn','Quality Inn','Holiday Inn','Best Western','Days Inn','Motel 6','Hampton Inn','Marriott'];
+const ATT_CITIES=['York','Lancaster','Columbia','Harrisburg','Reading','Allentown','Erie','Pittsburgh'];
+const ATT_PRICES=['$89','$102','$78','$115','$94','$67','$128','$108'];
+const TARGET_HOTEL='Holiday Inn',TARGET_CITY='Columbia';
+let attPhase=0,attStart=0,attTimes=[],attRunning=false,attInterval=null;
+
+function buildGrid(grouped){
+  const grid=document.getElementById('att-grid');
+  grid.innerHTML='';
+  const cells=[];
+  ATT_HOTELS.forEach((h,i)=>{
+    ATT_CITIES.forEach((c,j)=>{
+      cells.push({h,c,price:ATT_PRICES[(i+j)%8],isTarget:h===TARGET_HOTEL&&c===TARGET_CITY});
+    });
+  });
+  if(!grouped){
+    for(let k=cells.length-1;k>0;k--){const r=Math.floor(Math.random()*(k+1));[cells[k],cells[r]]=[cells[r],cells[k]];}
+  }
+  cells.forEach(cell=>{
+    const div=document.createElement('div');
+    div.className='att-cell'+(grouped&&(ATT_HOTELS.indexOf(cell.h)%2===0)?' highlight':'');
+    div.textContent=grouped?cell.price:cell.h.split(' ')[0];
+    div.title=cell.h+' — '+cell.c;
+    if(grouped)div.title=cell.h+', '+cell.c+': '+cell.price;
+    div.onclick=()=>handleCellClick(div,cell);
+    grid.appendChild(div);
+  });
+}
+function handleCellClick(div,cell){
+  if(!attRunning)return;
+  const elapsed=((Date.now()-attStart)/1000).toFixed(1);
+  if(cell.isTarget){
+    div.classList.add('target');
+    attRunning=false;
+    clearInterval(attInterval);
+    attTimes.push(parseFloat(elapsed));
+    document.getElementById('att-timer').textContent=elapsed+'s';
+    afterAttRound();
+  } else {
+    div.classList.add('clicked-wrong');
+    setTimeout(()=>div.classList.remove('clicked-wrong'),400);
+  }
+}
+function startAttention(){
+  if(attPhase===0){
+    buildGrid(false);
+    document.getElementById('att-title').textContent='Find: Holiday Inn, Columbia';
+    document.getElementById('att-sub').textContent='Layout 1: Bunched — all items same visual weight';
+    document.getElementById('att-go').textContent='—';
+    document.getElementById('att-go').disabled=true;
+    attRunning=true;attStart=Date.now();
+    attInterval=setInterval(()=>{
+      document.getElementById('att-timer').textContent=((Date.now()-attStart)/1000).toFixed(1)+'s';
+    },100);
+  }
+}
+function afterAttRound(){
+  if(attPhase===0){
+    document.getElementById('t1-val').textContent=attTimes[0].toFixed(1)+'s';
+    document.getElementById('att-result').style.display='block';
+    attPhase=1;
+    setTimeout(()=>{
+      buildGrid(true);
+      document.getElementById('att-title').textContent='Find: Holiday Inn, Columbia — round 2';
+      document.getElementById('att-sub').textContent='Layout 2: Grouped by visual category — click the correct price';
+      document.getElementById('att-go').textContent='Start round 2';
+      document.getElementById('att-go').disabled=false;
+      document.getElementById('att-go').onclick=()=>startRound2();
+    },800);
+  } else if(attPhase===1){
+    document.getElementById('t2-val').textContent=attTimes[1].toFixed(1)+'s';
+    const diff=(attTimes[0]-attTimes[1]).toFixed(1);
+    const faster=parseFloat(diff)>0;
+    document.getElementById('t-diff').textContent=(faster?diff+'s faster':'Same speed');
+    document.getElementById('att-design').style.display='block';
+    document.getElementById('att-go').style.display='none';
+    attPhase=2;
+  }
+}
+function startRound2(){
+  document.getElementById('att-go').disabled=true;
+  attRunning=true;attStart=Date.now();
+  attInterval=setInterval(()=>{
+    document.getElementById('att-timer').textContent=((Date.now()-attStart)/1000).toFixed(1)+'s';
+  },100);
+  attPhase=1;
+}
+function resetAttention(){
+  attPhase=0;attTimes=[];attRunning=false;clearInterval(attInterval);
+  document.getElementById('att-grid').innerHTML='';
+  document.getElementById('att-result').style.display='none';
+  document.getElementById('att-design').style.display='none';
+  document.getElementById('att-timer').textContent='0.0s';
+  document.getElementById('att-title').textContent='Find the price: Holiday Inn, Columbia';
+  document.getElementById('att-sub').textContent='Bunched layout — click the correct cell as fast as you can';
+  document.getElementById('att-go').textContent='Start round 1';
+  document.getElementById('att-go').disabled=false;
+  document.getElementById('att-go').onclick=startAttention;
+}
+
+/* ══ TAB 2: DRAG & DROP ══ */
+const DND_ZONES=[
+  {id:'attention',label:'Attention'},
+  {id:'memory',label:'Memory'},
+  {id:'perception',label:'Perception'},
+  {id:'learning',label:'Learning'},
+];
+const DND_ITEMS=[
+  {id:'a1',text:'Use color & animation to highlight new alerts',zone:'attention'},
+  {id:'a2',text:'Avoid cluttering the interface with too many elements',zone:'attention'},
+  {id:'m1',text:'Use menus so users recognize options, not recall them',zone:'memory'},
+  {id:'m2',text:'Provide folder colors and timestamps to help re-find files',zone:'memory'},
+  {id:'m3',text:'Reduce number of steps in multi-factor authentication',zone:'memory'},
+  {id:'p1',text:'Ensure sufficient color contrast for all text',zone:'perception'},
+  {id:'p2',text:'Use borders and whitespace to group related information',zone:'perception'},
+  {id:'l1',text:'Design interfaces that encourage exploration',zone:'learning'},
+  {id:'l2',text:'Provide contextual guidance rather than long manuals',zone:'learning'},
+];
+let dragId=null;
+
+function initDND(){
+  const tray=document.getElementById('dnd-tray');
+  tray.innerHTML='';
+  const shuffled=[...DND_ITEMS].sort(()=>Math.random()-.5);
+  shuffled.forEach(item=>tray.appendChild(makeDNDCard(item)));
+
+  const board=document.getElementById('dnd-board');
+  board.innerHTML='';
+  DND_ZONES.forEach(zone=>{
+    const col=document.createElement('div');
+    col.className='dnd-zone';
+    col.id='zone-'+zone.id;
+    col.innerHTML=`<div class="dnd-zone-label">${zone.label}</div><div class="dnd-cards" id="cards-${zone.id}"></div>`;
+    col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('over')});
+    col.addEventListener('dragleave',()=>col.classList.remove('over'));
+    col.addEventListener('drop',e=>{
+      e.preventDefault();col.classList.remove('over');
+      if(dragId){
+        const card=document.getElementById('dndc-'+dragId);
+        if(card)document.getElementById('cards-'+zone.id).appendChild(card);
+      }
+    });
+    board.appendChild(col);
+  });
+
+  tray.addEventListener('dragover',e=>{e.preventDefault();tray.classList.add('drag-over')});
+  tray.addEventListener('dragleave',()=>tray.classList.remove('drag-over'));
+  tray.addEventListener('drop',e=>{
+    e.preventDefault();tray.classList.remove('drag-over');
+    if(dragId){const card=document.getElementById('dndc-'+dragId);if(card)tray.appendChild(card);}
+  });
+
+  document.getElementById('dnd-feedback').textContent='';
+}
+
+function makeDNDCard(item){
+  const div=document.createElement('div');
+  div.className='dnd-card';
+  div.id='dndc-'+item.id;
+  div.draggable=true;
+  div.dataset.zone=item.zone;
+  div.textContent=item.text;
+  div.addEventListener('dragstart',()=>{dragId=item.id;div.classList.add('dragging')});
+  div.addEventListener('dragend',()=>{dragId=null;div.classList.remove('dragging')});
+  return div;
+}
+
+function checkDND(){
+  let correct=0,total=0;
+  DND_ZONES.forEach(zone=>{
+    const cards=document.querySelectorAll(`#cards-${zone.id} .dnd-card`);
+    cards.forEach(card=>{
+      total++;
+      if(card.dataset.zone===zone.id){correct++;card.classList.add('correct-placed');}
+      else card.classList.add('wrong-placed');
+    });
+  });
+  const pct=total>0?Math.round(correct/total*100):0;
+  document.getElementById('dnd-feedback').innerHTML=
+    `<span class="badge ${pct===100?'badge-success':pct>=60?'badge-warn':'badge-danger'}">${correct}/${total} correct (${pct}%)</span>`+
+    (pct<100?' — check the highlighted cards and try again.':' — perfect! Every design implication matched correctly.');
+}
+function resetDND(){
+  initDND();
+}
+initDND();
+
+/* ══ TAB 3: GULF BUILDER ══ */
+const GULF_STAGES=[
+  {label:'The Export option is buried under File → Download → PDF Document',type:'execution',choices:['Widens gulf — action is hard to find','Bridges gulf — clear and discoverable'],ans:0},
+  {label:'A prominent "Export" button is visible in the main toolbar',type:'execution',choices:['Widens gulf — not obvious','Bridges gulf — action is immediately discoverable'],ans:1},
+  {label:'After clicking export, the screen shows no visible change',type:'evaluation',choices:['Widens gulf — user cannot tell if it worked','Bridges gulf — feedback is clear'],ans:0},
+  {label:'A progress bar appears and "Saved to Downloads" notification shows',type:'evaluation',choices:['Widens gulf — too much information','Bridges gulf — user knows exactly what happened'],ans:1},
+  {label:'The exported file appears in an unexpected location with a cryptic name',type:'evaluation',choices:['Widens gulf — outcome is not legible','Bridges gulf — outcome is clear'],ans:0},
+];
+let gulfAnswers={};
+
+function initGulfs(){
+  gulfAnswers={};
+  document.getElementById('gulf-result').innerHTML='';
+  document.getElementById('gulf-theory').style.display='none';
+  const container=document.getElementById('gulf-stages');
+  container.innerHTML='';
+  GULF_STAGES.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='gulf-stage '+s.type;
+    div.innerHTML=`
+      <span class="badge ${s.type==='execution'?'badge-warn':'badge-info'}" style="font-size:11px;margin-bottom:6px;display:inline-block">${s.type==='execution'?'Execution':'Evaluation'}</span>
+      <p style="margin:0 0 6px;font-size:14px">${s.label}</p>
+      <select id="gulf-sel-${i}" onchange="gulfAnswers[${i}]=parseInt(this.value)">
+        <option value="">— choose —</option>
+        ${s.choices.map((c,j)=>`<option value="${j}">${c}</option>`).join('')}
+      </select>`;
+    container.appendChild(div);
+  });
+}
+function checkGulfs(){
+  let correct=0,unanswered=0;
+  GULF_STAGES.forEach((s,i)=>{
+    const div=document.querySelectorAll('#gulf-stages .gulf-stage')[i];
+    const v=gulfAnswers[i];
+    if(v===undefined||v===''){unanswered++;return;}
+    if(parseInt(v)===s.ans){correct++;div.classList.add('good');div.classList.remove('bad');}
+    else{div.classList.add('bad');div.classList.remove('good');}
+  });
+  const total=GULF_STAGES.length;
+  const pct=Math.round(correct/total*100);
+  document.getElementById('gulf-result').innerHTML=
+    unanswered>0?`<span class="badge badge-warn">Answer all ${unanswered} remaining question${unanswered>1?'s':''} first</span>`:
+    `<span class="badge ${pct===100?'badge-success':pct>=60?'badge-warn':'badge-danger'}">${correct}/${total} correct (${pct}%)</span>`+
+    (pct===100?' — you correctly identified every gulf and design decision!':' — review the highlighted stages and consider which gulf each scenario affects.');
+  if(correct===total)document.getElementById('gulf-theory').style.display='block';
+}
+function resetGulfs(){initGulfs();}
+initGulfs();
+</script>

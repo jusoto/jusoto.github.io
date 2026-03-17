@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presence Spectrum — UX/UI Design Week 3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0d0a14;
+    --surface: #16101f;
+    --surface2: #1e1530;
+    --border: rgba(180,140,255,0.15);
+    --accent: #a855f7;
+    --accent2: #7c3aed;
+    --accent-glow: rgba(168,85,247,0.25);
+    --gold: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --text: #e8e0f0;
+    --muted: #7a6e8a;
+    --card-bg: #1e1530;
+    --card-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    --spectrum-h: 90px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124,58,237,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(168,85,247,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 48px 0 32px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+    flex-wrap: wrap;
+  }
+  .header-left {}
+  .chapter-tag {
+    display: inline-block;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); background: rgba(168,85,247,0.12);
+    border: 1px solid rgba(168,85,247,0.3);
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 4vw, 44px); font-weight: 400; line-height: 1.1;
+    color: #fff; margin-bottom: 8px;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .subtitle { font-size: 15px; color: var(--muted); font-weight: 300; }
+
+  .header-controls { display: flex; gap: 10px; flex-shrink: 0; align-items: flex-start; padding-top: 8px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #9333ea; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(168,85,247,0.4); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── INSTRUCTIONS BANNER ── */
+  .instructions {
+    background: rgba(168,85,247,0.07); border: 1px solid rgba(168,85,247,0.2);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 32px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .instructions-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .instructions p { font-size: 14px; color: #c4b5d4; line-height: 1.6; }
+  .instructions strong { color: var(--text); }
+
+  /* ── PHASE TABS ── */
+  .phases {
+    display: flex; gap: 4px; margin-bottom: 28px;
+    background: var(--surface); border-radius: 12px; padding: 6px;
+    border: 1px solid var(--border);
+  }
+  .phase-btn {
+    flex: 1; padding: 10px 8px; border-radius: 8px; border: none;
+    background: transparent; color: var(--muted);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+  .phase-btn .phase-num {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    opacity: 0.6;
+  }
+  .phase-btn.active { background: var(--accent2); color: #fff; }
+  .phase-btn.active .phase-num { opacity: 0.8; }
+  .phase-btn:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.04); }
+
+  /* ── SECTION CARD ── */
+  .section-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; margin-bottom: 24px;
+  }
+  .section-title {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+  }
+
+  /* ── SPECTRUM BAR ── */
+  .spectrum-container { position: relative; margin-bottom: 12px; }
+  .spectrum-bar {
+    height: var(--spectrum-h); border-radius: 12px;
+    background: linear-gradient(90deg,
+      #1a1a2e 0%,
+      #16213e 15%,
+      #1a1040 30%,
+      #2d1080 50%,
+      #5b21b6 70%,
+      #7c3aed 85%,
+      #a855f7 100%
+    );
+    border: 1px solid var(--border);
+    position: relative; overflow: visible;
+  }
+  .spectrum-labels {
+    display: flex; justify-content: space-between;
+    padding: 0 4px; margin-top: 8px;
+  }
+  .spectrum-labels span {
+    font-size: 11px; color: var(--muted); font-weight: 500;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  }
+  .spectrum-labels span:last-child { align-items: flex-end; }
+  .spectrum-labels .label-main { color: var(--text); font-weight: 600; font-size: 13px; }
+
+  /* Drop zones along spectrum */
+  .drop-zones {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+  }
+  .drop-zone {
+    flex: 1; height: 100%;
+    transition: background 0.2s;
+  }
+  .drop-zone.drag-over { background: rgba(255,255,255,0.12); }
+
+  /* Zone markers */
+  .zone-markers {
+    display: flex; justify-content: space-around;
+    padding: 0 2%; margin-top: 4px;
+  }
+  .zone-marker {
+    font-size: 10px; color: rgba(255,255,255,0.35); text-align: center;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PLACED CARDS on spectrum ── */
+  .placed-cards-row {
+    min-height: 60px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border); margin-bottom: 16px;
+  }
+
+  /* ── CARD TRAY ── */
+  .card-tray {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    min-height: 80px; padding: 8px;
+    background: rgba(0,0,0,0.2); border-radius: 10px;
+    border: 2px dashed rgba(255,255,255,0.08);
+    transition: border-color 0.2s;
+  }
+  .card-tray.drag-over { border-color: var(--accent); background: rgba(168,85,247,0.06); }
+  .tray-label { font-size: 11px; color: var(--muted); width: 100%; padding: 2px 4px; }
+
+  /* ── TECH CARD ── */
+  .tech-card {
+    display: inline-flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 10px 14px;
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 10px; cursor: grab;
+    transition: all 0.2s; user-select: none;
+    box-shadow: var(--card-shadow);
+    min-width: 90px; text-align: center;
+  }
+  .tech-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
+  .tech-card.dragging { opacity: 0.4; transform: scale(0.95); }
+  .tech-card .card-icon { font-size: 22px; line-height: 1; }
+  .tech-card .card-name { font-size: 11px; font-weight: 600; color: var(--text); }
+  .tech-card .card-sub { font-size: 10px; color: var(--muted); }
+  .tech-card.round2 { border-color: rgba(245,158,11,0.3); }
+  .tech-card.round2 .card-name::after {
+    content: ' ★'; font-size: 9px; color: var(--gold);
+  }
+
+  /* Placed on spectrum: smaller */
+  .spectrum-track {
+    position: relative; height: 120px; margin-bottom: 8px;
+  }
+  .spectrum-placed {
+    position: absolute; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer;
+  }
+  .spectrum-placed .card-icon { font-size: 18px; }
+  .spectrum-placed .card-name { font-size: 10px; font-weight: 600; white-space: nowrap; }
+  .spectrum-placed .stem {
+    width: 2px; height: 20px; background: rgba(255,255,255,0.25); margin: 0 auto;
+  }
+  .spectrum-placed .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  /* ── DISCUSSION PANEL ── */
+  .discussion-panel {
+    background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.2);
+    border-radius: 12px; padding: 24px;
+  }
+  .discussion-q {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; line-height: 1.35; color: #fff; margin-bottom: 16px;
+    min-height: 56px;
+  }
+  .discussion-nav { display: flex; gap: 10px; align-items: center; }
+  .q-counter { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .q-dots { display: flex; gap: 6px; }
+  .q-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+  .q-dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+  .q-hint {
+    margin-top: 14px; padding: 12px 16px;
+    background: rgba(0,0,0,0.25); border-radius: 8px;
+    font-size: 13px; color: var(--muted); line-height: 1.6;
+    border-left: 3px solid var(--accent2);
+    display: none;
+  }
+  .q-hint.visible { display: block; }
+
+  /* ── LIVE POLL ── */
+  .poll-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .poll-option {
+    padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface2); cursor: pointer; transition: all 0.2s;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .poll-option:hover { border-color: var(--accent); }
+  .poll-option.voted { border-color: var(--accent); background: rgba(168,85,247,0.12); }
+  .poll-option .opt-label { font-size: 14px; font-weight: 500; }
+  .poll-option .opt-bar-wrap { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+  .poll-option .opt-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s ease; width: 0; }
+  .poll-option .opt-count { font-size: 11px; color: var(--muted); }
+  .poll-note { font-size: 12px; color: var(--muted); text-align: center; }
+
+  /* ── REVEAL ── */
+  .reveal-block {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin-top: 16px;
+    display: none;
+  }
+  .reveal-block.visible { display: block; animation: fadeUp 0.4s ease; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+  .reveal-block h4 { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
+  .reveal-block p { font-size: 14px; color: #c4b5d4; line-height: 1.65; }
+
+  /* ── SCORE BOARD ── */
+  .scoreboard { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .score-item {
+    flex: 1; min-width: 140px; padding: 16px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border); text-align: center;
+  }
+  .score-item .score-val { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--accent); }
+  .score-item .score-lab { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1e1530; border: 1px solid var(--accent); border-radius: 10px;
+    padding: 12px 24px; font-size: 14px; color: var(--text);
+    transition: transform 0.3s ease; z-index: 100; white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Responsive */
+  @media(max-width: 640px) {
+    .phases { flex-direction: column; }
+    .phase-btn { flex-direction: row; justify-content: center; }
+    .header-controls { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="chapter-tag">UX/UI Design · Week 3 · Chapter 5</div>
+      <h1>The <em>Presence</em> Spectrum</h1>
+      <p class="subtitle">Social Interaction · Interactive Classroom Tool</p>
+    </div>
+    <div class="header-controls">
+      <button class="btn btn-ghost" onclick="resetAll()">↺ Reset</button>
+      <button class="btn btn-primary" onclick="nextPhase()">Next Phase →</button>
+    </div>
+  </header>
+
+  <!-- INSTRUCTIONS -->
+  <div class="instructions">
+    <div class="instructions-icon">🎯</div>
+    <p>
+      <strong>Instructions:</strong> Move through <strong>3 phases</strong> using the tabs below.
+      Phase 1 — students drag technology cards onto the presence spectrum.
+      Phase 2 — class votes on the dilemma poll.
+      Phase 3 — structured debrief questions with reveal hints.
+      Use the <strong>Next Phase →</strong> button to advance, or click any tab directly.
+    </p>
+  </div>
+
+  <!-- PHASE TABS -->
+  <div class="phases">
+    <button class="phase-btn active" id="tab-0" onclick="goPhase(0)">
+      <span class="phase-num">Phase 1</span>Presence Spectrum
+    </button>
+    <button class="phase-btn" id="tab-1" onclick="goPhase(1)">
+      <span class="phase-num">Phase 2</span>Live Poll
+    </button>
+    <button class="phase-btn" id="tab-2" onclick="goPhase(2)">
+      <span class="phase-num">Phase 3</span>Discussion
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHASE 1: SPECTRUM -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="phase-0">
+
+    <div class="section-card">
+      <div class="section-title">Presence Spectrum — Drag each technology to its position</div>
+
+      <!-- THE BAR -->
+      <div class="spectrum-container">
+        <div class="spectrum-bar" id="spectrumBar">
+          <div class="drop-zones" id="dropZones"></div>
+        </div>
+        <div class="spectrum-labels">
+          <span><span class="label-main">Zero Presence</span>No sense of another person</span>
+          <span style="align-items:center;"><span class="label-main" style="text-align:center;">Partial Presence</span></span>
+          <span><span class="label-main">Full Co-Presence</span>Like being in the same room</span>
+        </div>
+        <div class="zone-markers" id="zoneMarkers"></div>
+      </div>
+
+      <!-- PLACED CARDS TRACK -->
+      <div class="spectrum-track" id="spectrumTrack">
+        <!-- cards placed here via JS -->
+      </div>
+
+    </div>
+
+    <!-- ROUND 1 TRAY -->
+    <div class="section-card" style="padding-bottom:16px;">
+      <div class="section-title">Round 1 — Core Technologies · Drag onto the spectrum above</div>
+      <div class="card-tray" id="tray-1"></div>
+    </div>
+
+    <!-- ROUND 2 TRAY -->
+    <div class="section-card" style="padding-bottom:16px;" id="round2-section" style="display:none;">
+      <div class="section-title">Round 2 — Edge Cases ★ · More debatable placements</div>
+      <div class="card-tray" id="tray-2"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="showRound2()">Reveal Round 2 Cards ★</button>
+      <button class="btn btn-ghost" onclick="clearSpectrum()">Clear Spectrum</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHASE 2: POLL -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="phase-1" style="display:none;">
+    <div class="section-card">
+      <div class="section-title">Class Dilemma Poll</div>
+      <div class="discussion-q" style="font-size:22px;margin-bottom:20px;">
+        A designer's goal: should you always maximize social presence in your product?
+      </div>
+
+      <div class="poll-grid" id="pollGrid"></div>
+      <p class="poll-note" id="pollNote">Click an option to cast your vote — students can vote individually on their devices.</p>
+
+      <div class="reveal-block" id="pollReveal">
+        <h4>Instructor context — after revealing votes:</h4>
+        <p>There is no universally correct answer. Use the split in the room to probe: <em>"Who answered Depends — what condition would tip you to Yes?"</em> Connect to the chapter: higher presence isn't always better (e.g., anonymous support groups benefit from <em>reduced</em> presence). The question is always: presence for whom, doing what?</p>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button class="btn btn-primary" onclick="revealPoll()">Reveal Results</button>
+        <button class="btn btn-ghost" onclick="resetPoll()">Reset Poll</button>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">Follow-up Scenario</div>
+      <div class="discussion-q" style="font-size:17px;line-height:1.5;font-family:'DM Sans',sans-serif;font-weight:300;">
+        Eugenia Kuyda built a chatbot trained on her deceased friend's texts so she could keep talking to him.
+        <br><br>
+        <strong style="font-weight:600;color:#fff;">As the UX designer of this product — what ONE design decision would you make to ensure it is ethical?</strong>
+      </div>
+      <div class="poll-grid" id="pollGrid2"></div>
+      <div class="reveal-block" id="pollReveal2" style="margin-top:12px;">
+        <h4>Real products that have tried this:</h4>
+        <p><strong>Replika</strong> — AI companion app. <strong>HereAfterAI</strong> — lets people record memories before death. <strong>StoryFile</strong> — interactive video chatbot of deceased. Ask students: have any of these companies solved the ethical challenges the class raised?</p>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button class="btn btn-primary" onclick="revealPoll2()">Reveal Designs</button>
+        <button class="btn btn-ghost" onclick="resetPoll2()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHASE 3: DISCUSSION -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="phase-2" style="display:none;">
+    <div class="section-card">
+      <div class="section-title">Debrief Discussion Questions</div>
+
+      <div class="scoreboard">
+        <div class="score-item">
+          <div class="score-val" id="qNum">1</div>
+          <div class="score-lab">Current Question</div>
+        </div>
+        <div class="score-item">
+          <div class="score-val">5</div>
+          <div class="score-lab">Total Questions</div>
+        </div>
+        <div class="score-item">
+          <div class="score-val" id="timeLeft">—</div>
+          <div class="score-lab">Timer</div>
+        </div>
+      </div>
+
+      <div class="discussion-panel">
+        <div class="discussion-q" id="currentQ"></div>
+
+        <div class="q-hint" id="qHint"></div>
+
+        <div class="discussion-nav">
+          <button class="btn btn-ghost" style="padding:8px 16px;font-size:12px;" onclick="prevQ()">← Prev</button>
+          <div class="q-dots" id="qDots"></div>
+          <button class="btn btn-primary" style="padding:8px 16px;font-size:12px;" onclick="nextQ()">Next →</button>
+          <span class="q-counter" id="qCounter"></span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn btn-ghost" onclick="toggleHint()">💡 Show Hint</button>
+        <button class="btn btn-ghost" onclick="startTimer(120)">⏱ 2 min timer</button>
+        <button class="btn btn-ghost" onclick="startTimer(60)">⏱ 1 min timer</button>
+        <button class="btn btn-ghost" onclick="stopTimer()">■ Stop timer</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const TECHS_R1 = [
+  { id:'sms',   icon:'💬', name:'SMS / Text',        sub:'async, text only',     pos: null, round:1 },
+  { id:'email', icon:'📧', name:'Email',              sub:'async, structured',    pos: null, round:1 },
+  { id:'phone', icon:'📞', name:'Phone Call',         sub:'real-time, voice',     pos: null, round:1 },
+  { id:'zoom',  icon:'📹', name:'Zoom / Video Call',  sub:'real-time, A/V',       pos: null, round:1 },
+  { id:'vr',    icon:'🥽', name:'VR Avatar',          sub:'immersive, 3D space',  pos: null, round:1 },
+  { id:'f2f',   icon:'🤝', name:'In-Person F2F',      sub:'full sensory channel', pos: null, round:1 },
+];
+
+const TECHS_R2 = [
+  { id:'robot',    icon:'🤖', name:'Telepresence Robot', sub:'remote-controlled', pos: null, round:2 },
+  { id:'chatbot',  icon:'💭', name:'AI Chatbot',          sub:'text, no real human', pos: null, round:2 },
+  { id:'voice',    icon:'🎙️', name:'Voice Note',          sub:'async, audio',       pos: null, round:2 },
+  { id:'letter',   icon:'✉️', name:'Handwritten Letter',  sub:'physical, delayed',  pos: null, round:2 },
+  { id:'twitter',  icon:'🐦', name:'Public Tweet',        sub:'broadcast, async',   pos: null, round:2 },
+  { id:'facetime', icon:'📱', name:'FaceTime',            sub:'mobile video',        pos: null, round:2 },
+];
+
+const POLL_OPTIONS = [
+  { id:'yes',     label:'✅ Yes, always maximize presence',    desc:'More presence = better social experience' },
+  { id:'no',      label:'❌ No, presence isn\'t always better',desc:'Sometimes less is more' },
+  { id:'depends', label:'🤔 It depends on context',            desc:'The use case determines the right level' },
+  { id:'unknown', label:'❓ I\'m not sure yet',                desc:'Need more evidence to decide' },
+];
+
+const POLL2_OPTIONS = [
+  { id:'consent',    label:'🔒 Require explicit consent', desc:'The person records their own data before death' },
+  { id:'disclosure', label:'📢 Clear AI disclosure',       desc:'Never let it pretend to be the real person' },
+  { id:'sunset',     label:'⏳ Auto-sunset the chatbot',   desc:'Disable after a set grieving period' },
+  { id:'control',    label:'🎛️ User-controlled memories', desc:'Only uses data the person consciously curated' },
+];
+
+const QUESTIONS = [
+  {
+    q: "Why does a phone call feel more 'present' than an email, even though both are mediated by technology?",
+    hint: "Think about synchronicity (real-time vs. async), sensory channels (voice vs. text), and the social signals each carries — tone, pacing, hesitation. What exactly is being 'lost' at each step?"
+  },
+  {
+    q: "The VideoWindow system failed partly because people moved closer to speak — the opposite of what helped. What design lesson does this teach about mapping physical intuitions to virtual spaces?",
+    hint: "Users applied a real-world mental model (move closer = connect better) that didn't match the system's actual mechanics. This is the Gulf of Execution in a physical-digital hybrid. What affordances should the system have provided?"
+  },
+  {
+    q: "At what point does adding realism to a communication system stop improving social presence — and start feeling uncanny or uncomfortable?",
+    hint: "Reference the 'uncanny valley' concept. Consider: hyper-realistic avatars, voice cloning, deepfake video calls. At what level of realism does the simulation start feeling wrong rather than better?"
+  },
+  {
+    q: "The Reflect Table showed that heavy speakers changed their behavior when shown data — but quiet speakers didn't. Why might this be, and what does it mean for designing tools that promote equity in group conversations?",
+    hint: "Consider: heavy speakers have something to lose. Quiet speakers may not see silence as a problem (introversion, cultural norms, content). Design that only affects dominant behavior may not be enough — you may also need to actively scaffold participation for quieter members."
+  },
+  {
+    q: "Should UX designers aim to maximize social presence in every product — or are there cases where deliberately reducing presence creates a better experience?",
+    hint: "Counter-examples: anonymous support forums (reduced presence = more honesty), productivity tools (presence notifications = distraction), texting over calling (lower pressure, more thoughtful). The answer is always: presence for whom, doing what, with what goal?"
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+
+let currentPhase = 0;
+let currentQ = 0;
+let hintVisible = false;
+let pollVotes = {};
+let poll2Votes = {};
+let timerInterval = null;
+let timerSecs = 0;
+let round2Shown = false;
+let allTechs = [...TECHS_R1];
+
+POLL_OPTIONS.forEach(o => pollVotes[o.id] = 0);
+POLL2_OPTIONS.forEach(o => poll2Votes[o.id] = 0);
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+
+function init() {
+  buildSpectrumDropZones();
+  buildTray('tray-1', TECHS_R1);
+  buildPoll('pollGrid', POLL_OPTIONS, pollVotes, 'pollReveal');
+  buildPoll('pollGrid2', POLL2_OPTIONS, poll2Votes, 'pollReveal2');
+  buildDiscussion();
+}
+
+// ── SPECTRUM ─────────────────────────────────────────────────────────────────
+
+const NUM_ZONES = 20;
+
+function buildSpectrumDropZones() {
+  const dz = document.getElementById('dropZones');
+  for (let i = 0; i < NUM_ZONES; i++) {
+    const z = document.createElement('div');
+    z.className = 'drop-zone';
+    z.dataset.pos = i;
+    z.addEventListener('dragover', e => { e.preventDefault(); z.classList.add('drag-over'); });
+    z.addEventListener('dragleave', () => z.classList.remove('drag-over'));
+    z.addEventListener('drop', e => {
+      e.preventDefault(); z.classList.remove('drag-over');
+      const id = e.dataTransfer.getData('text/plain');
+      placeCard(id, i / (NUM_ZONES - 1));
+    });
+    dz.appendChild(z);
+  }
+
+  // Zone marker labels
+  const markers = document.getElementById('zoneMarkers');
+  ['Completely Async', 'Delayed / Recorded', 'Real-Time Audio', 'Video + Audio', 'Spatial / Immersive'].forEach(label => {
+    const m = document.createElement('div');
+    m.className = 'zone-marker';
+    m.textContent = label;
+    markers.appendChild(m);
+  });
+}
+
+function buildTray(trayId, techs) {
+  const tray = document.getElementById(trayId);
+  tray.addEventListener('dragover', e => { e.preventDefault(); tray.classList.add('drag-over'); });
+  tray.addEventListener('dragleave', () => tray.classList.remove('drag-over'));
+  tray.addEventListener('drop', e => {
+    e.preventDefault(); tray.classList.remove('drag-over');
+    const id = e.dataTransfer.getData('text/plain');
+    returnToTray(id, trayId);
+  });
+
+  techs.forEach(tech => {
+    tray.appendChild(makeCard(tech));
+  });
+}
+
+function makeCard(tech) {
+  const card = document.createElement('div');
+  card.className = 'tech-card' + (tech.round === 2 ? ' round2' : '');
+  card.id = 'card-' + tech.id;
+  card.draggable = true;
+  card.innerHTML = `<div class="card-icon">${tech.icon}</div><div class="card-name">${tech.name}</div><div class="card-sub">${tech.sub}</div>`;
+  card.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', tech.id);
+    card.classList.add('dragging');
+  });
+  card.addEventListener('dragend', () => card.classList.remove('dragging'));
+  return card;
+}
+
+function getTech(id) {
+  return [...TECHS_R1, ...TECHS_R2].find(t => t.id === id);
+}
+
+function placeCard(id, pos) {
+  const tech = getTech(id);
+  if (!tech) return;
+  tech.pos = pos;
+  renderSpectrum();
+  // Remove from tray
+  const card = document.getElementById('card-' + id);
+  if (card && card.parentNode) card.parentNode.removeChild(card);
+  showToast(`${tech.icon} ${tech.name} placed on spectrum`);
+}
+
+function returnToTray(id, trayId) {
+  const tech = getTech(id);
+  if (!tech) return;
+  const wasPlaced = tech.pos !== null;
+  tech.pos = null;
+  if (wasPlaced) renderSpectrum();
+  // Add back to correct tray
+  const targetTray = trayId || (tech.round === 2 ? 'tray-2' : 'tray-1');
+  const tray = document.getElementById(targetTray);
+  if (!document.getElementById('card-' + id)) {
+    tray.appendChild(makeCard(tech));
+  }
+}
+
+function renderSpectrum() {
+  const track = document.getElementById('spectrumTrack');
+  track.innerHTML = '';
+  const placed = [...TECHS_R1, ...TECHS_R2].filter(t => t.pos !== null);
+  placed.forEach(tech => {
+    const el = document.createElement('div');
+    el.className = 'spectrum-placed';
+    el.style.left = (tech.pos * 100) + '%';
+    el.style.top = '4px';
+    el.innerHTML = `
+      <div class="card-icon">${tech.icon}</div>
+      <div class="card-name" style="color:${tech.round===2?'#f59e0b':'#e8e0f0'}">${tech.name}</div>
+      <div class="stem"></div>
+      <div class="dot"></div>`;
+    el.title = `Click to remove ${tech.name}`;
+    el.addEventListener('click', () => {
+      tech.pos = null;
+      renderSpectrum();
+      const tray = document.getElementById(tech.round === 2 ? 'tray-2' : 'tray-1');
+      if (!document.getElementById('card-' + tech.id)) {
+        tray.appendChild(makeCard(tech));
+      }
+      showToast(`${tech.name} returned to tray`);
+    });
+    track.appendChild(el);
+  });
+}
+
+function clearSpectrum() {
+  [...TECHS_R1, ...TECHS_R2].forEach(t => {
+    if (t.pos !== null) {
+      t.pos = null;
+      const tray = document.getElementById(t.round === 2 ? 'tray-2' : 'tray-1');
+      if (tray && !document.getElementById('card-' + t.id)) {
+        tray.appendChild(makeCard(t));
+      }
+    }
+  });
+  renderSpectrum();
+  showToast('Spectrum cleared');
+}
+
+function showRound2() {
+  if (round2Shown) return;
+  round2Shown = true;
+  document.getElementById('round2-section').style.display = '';
+  buildTray('tray-2', TECHS_R2);
+  allTechs = [...TECHS_R1, ...TECHS_R2];
+  showToast('★ Round 2 cards revealed!');
+}
+
+// ── POLL ─────────────────────────────────────────────────────────────────────
+
+function buildPoll(gridId, options, votes, revealId) {
+  const grid = document.getElementById(gridId);
+  options.forEach(opt => {
+    const el = document.createElement('div');
+    el.className = 'poll-option';
+    el.id = gridId + '-' + opt.id;
+    el.innerHTML = `
+      <div class="opt-label">${opt.label}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;">${opt.desc}</div>
+      <div class="opt-bar-wrap"><div class="opt-bar" id="${gridId}-bar-${opt.id}"></div></div>
+      <div class="opt-count" id="${gridId}-count-${opt.id}">0 votes</div>`;
+    el.addEventListener('click', () => castVote(gridId, opt.id, options, votes, revealId));
+    grid.appendChild(el);
+  });
+}
+
+function castVote(gridId, optId, options, votes, revealId) {
+  votes[optId] = (votes[optId] || 0) + 1;
+  updatePollDisplay(gridId, options, votes);
+  document.getElementById(gridId + '-' + optId).classList.add('voted');
+  showToast('Vote recorded!');
+}
+
+function updatePollDisplay(gridId, options, votes) {
+  const total = options.reduce((s, o) => s + (votes[o.id] || 0), 0);
+  options.forEach(opt => {
+    const count = votes[opt.id] || 0;
+    const pct = total > 0 ? (count / total * 100) : 0;
+    const bar = document.getElementById(`${gridId}-bar-${opt.id}`);
+    const cnt = document.getElementById(`${gridId}-count-${opt.id}`);
+    if (bar) bar.style.width = pct + '%';
+    if (cnt) cnt.textContent = `${count} vote${count !== 1 ? 's' : ''} (${Math.round(pct)}%)`;
+  });
+}
+
+function revealPoll() {
+  updatePollDisplay('pollGrid', POLL_OPTIONS, pollVotes);
+  document.getElementById('pollReveal').classList.add('visible');
+}
+function resetPoll() {
+  POLL_OPTIONS.forEach(o => pollVotes[o.id] = 0);
+  updatePollDisplay('pollGrid', POLL_OPTIONS, pollVotes);
+  document.querySelectorAll('#pollGrid .poll-option').forEach(el => el.classList.remove('voted'));
+  document.getElementById('pollReveal').classList.remove('visible');
+  showToast('Poll reset');
+}
+function revealPoll2() {
+  updatePollDisplay('pollGrid2', POLL2_OPTIONS, poll2Votes);
+  document.getElementById('pollReveal2').classList.add('visible');
+}
+function resetPoll2() {
+  POLL2_OPTIONS.forEach(o => poll2Votes[o.id] = 0);
+  updatePollDisplay('pollGrid2', POLL2_OPTIONS, poll2Votes);
+  document.querySelectorAll('#pollGrid2 .poll-option').forEach(el => el.classList.remove('voted'));
+  document.getElementById('pollReveal2').classList.remove('visible');
+  showToast('Poll reset');
+}
+
+// ── DISCUSSION ────────────────────────────────────────────────────────────────
+
+function buildDiscussion() {
+  const dots = document.getElementById('qDots');
+  QUESTIONS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'q-dot' + (i === 0 ? ' active' : '');
+    d.id = 'dot-' + i;
+    dots.appendChild(d);
+  });
+  renderQuestion();
+}
+
+function renderQuestion() {
+  document.getElementById('currentQ').textContent = QUESTIONS[currentQ].q;
+  document.getElementById('qHint').textContent = QUESTIONS[currentQ].hint;
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('qCounter').textContent = `${currentQ + 1} / ${QUESTIONS.length}`;
+  document.querySelectorAll('.q-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === currentQ);
+  });
+  if (hintVisible) {
+    document.getElementById('qHint').classList.add('visible');
+  } else {
+    document.getElementById('qHint').classList.remove('visible');
+  }
+}
+
+function nextQ() {
+  if (currentQ < QUESTIONS.length - 1) { currentQ++; hintVisible = false; renderQuestion(); }
+}
+function prevQ() {
+  if (currentQ > 0) { currentQ--; hintVisible = false; renderQuestion(); }
+}
+function toggleHint() {
+  hintVisible = !hintVisible;
+  document.getElementById('qHint').classList.toggle('visible', hintVisible);
+}
+
+// ── TIMER ─────────────────────────────────────────────────────────────────────
+
+function startTimer(secs) {
+  stopTimer();
+  timerSecs = secs;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timerSecs--;
+    updateTimerDisplay();
+    if (timerSecs <= 0) { stopTimer(); showToast('⏰ Time is up!'); }
+  }, 1000);
+}
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  document.getElementById('timeLeft').textContent = '—';
+}
+function updateTimerDisplay() {
+  const m = Math.floor(timerSecs / 60);
+  const s = timerSecs % 60;
+  document.getElementById('timeLeft').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+// ── PHASE NAV ────────────────────────────────────────────────────────────────
+
+function goPhase(n) {
+  currentPhase = n;
+  [0, 1, 2].forEach(i => {
+    document.getElementById('phase-' + i).style.display = i === n ? '' : 'none';
+    document.getElementById('tab-' + i).classList.toggle('active', i === n);
+  });
+}
+function nextPhase() {
+  if (currentPhase < 2) goPhase(currentPhase + 1);
+  else showToast('You are on the last phase');
+}
+
+// ── RESET ─────────────────────────────────────────────────────────────────────
+
+function resetAll() {
+  clearSpectrum();
+  resetPoll(); resetPoll2();
+  currentQ = 0; hintVisible = false;
+  renderQuestion();
+  goPhase(0);
+  showToast('Everything reset ↺');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── GO ─────────────────────────────────────────────────────────────────────
+
+init();
+</script>
+</body>
+</html>
